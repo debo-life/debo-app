@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import type { MemoryItem } from "../types/memory";
-import { clearMemories, exportMemories, importMemories } from "../lib/storage";
+import { clearAllData, exportAllData, importAllData } from "../lib/storage";
 import Button from "../components/Button";
 import Toast from "../components/Toast";
 
@@ -15,16 +15,16 @@ export default function Settings({ memories, onClear }: SettingsProps) {
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleClear = () => {
-    clearMemories();
+  const handleClear = async () => {
+    await clearAllData();
     onClear();
     setConfirming(false);
     setToast("All data cleared. Your slate is clean.");
     setToastType("success");
   };
 
-  const handleExport = () => {
-    const json = exportMemories();
+  const handleExport = async () => {
+    const json = await exportAllData();
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -40,11 +40,11 @@ export default function Settings({ memories, onClear }: SettingsProps) {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
-        const imported = importMemories(reader.result as string);
+        const imported = await importAllData(reader.result as string);
         onClear();
-        setToast(`Imported ${imported.length} memories. Welcome back.`);
+        setToast(`Imported ${imported.memories} memories, ${imported.journals} journals. Welcome back.`);
         setToastType("success");
       } catch (err) {
         setToast(err instanceof Error ? err.message : "Import failed");

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { MemoryItem } from "./types/memory";
 import type { JournalEntry } from "./types/journal";
 import {
@@ -7,7 +7,6 @@ import {
   updateMemory,
   getJournals,
   createJournal,
-  getJournal,
 } from "./lib/storage";
 import Sidebar, { type Page } from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
@@ -23,42 +22,52 @@ export type { Page };
 
 export default function App() {
   const [page, setPage] = useState<Page>("dashboard");
-  const [memories, setMemories] = useState<MemoryItem[]>(getMemories);
-  const [journals, setJournals] = useState<JournalEntry[]>(getJournals);
+  const [memories, setMemories] = useState<MemoryItem[]>([]);
+  const [journals, setJournals] = useState<JournalEntry[]>([]);
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(
     null
   );
 
-  const refreshMemories = useCallback(() => {
-    setMemories(getMemories());
+  const refreshMemories = useCallback(async () => {
+    const data = await getMemories();
+    setMemories(data);
   }, []);
 
-  const refreshJournals = useCallback(() => {
-    setJournals(getJournals());
+  const refreshJournals = useCallback(async () => {
+    const data = await getJournals();
+    setJournals(data);
   }, []);
+
+  const refresh = useCallback(async () => {
+    await Promise.all([refreshMemories(), refreshJournals()]);
+  }, [refreshMemories, refreshJournals]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   const handleDelete = useCallback(
-    (id: string) => {
-      deleteMemory(id);
-      refreshMemories();
+    async (id: string) => {
+      await deleteMemory(id);
+      await refreshMemories();
     },
     [refreshMemories]
   );
 
   const handleToggleTask = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const mem = memories.find((m) => m.id === id);
       if (mem) {
-        updateMemory(id, { completed: !mem.completed });
-        refreshMemories();
+        await updateMemory(id, { completed: !mem.completed });
+        await refreshMemories();
       }
     },
     [memories, refreshMemories]
   );
 
-  const handleNewJournal = useCallback(() => {
-    const journal = createJournal({ title: "Untitled" });
-    refreshJournals();
+  const handleNewJournal = useCallback(async () => {
+    const journal = await createJournal({ title: "Untitled" });
+    await refreshJournals();
     setSelectedJournalId(journal.id);
     setPage("journal-detail");
   }, [refreshJournals]);
@@ -73,15 +82,15 @@ export default function App() {
     setPage("journals");
   }, []);
 
-  const handleDeleteJournal = useCallback(() => {
+  const handleDeleteJournal = useCallback(async () => {
     setSelectedJournalId(null);
-    refreshJournals();
+    await refreshJournals();
     setPage("journals");
   }, [refreshJournals]);
 
   const handleUpdateJournal = useCallback(
-    (_journal: JournalEntry) => {
-      refreshJournals();
+    async (_journal: JournalEntry) => {
+      await refreshJournals();
     },
     [refreshJournals]
   );
@@ -102,7 +111,7 @@ export default function App() {
         );
       case "journal-detail": {
         const journal = selectedJournalId
-          ? getJournal(selectedJournalId)
+          ? journals.find((j) => j.id === selectedJournalId) ?? null
           : null;
         if (!journal) {
           return (
