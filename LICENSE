@@ -1,0 +1,75 @@
+This is a source-available license, not an OSI-approved open source license.
+
+================================================================================
+
+Debo Personal Use License v1.0
+
+Copyright (c) 2026 Shaswat Raj and Debo contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, and run the Software for personal, non-commercial purposes only,
+subject to the following conditions:
+
+1. PERSONAL USE ONLY
+
+   The Software may be used only for personal, non-commercial purposes.
+   Personal use means use by an individual for private, educational, research,
+   hobby, or personal productivity purposes.
+
+2. NON-COMMERCIAL USE
+
+   The following uses are expressly prohibited without prior written permission
+   from the copyright holder:
+
+   - Use by companies, startups, agencies, or organizations
+   - Use for client work or professional services
+   - Use in paid products or services
+   - SaaS hosting or hosting as a service
+   - Resale or redistribution for profit
+   - White-labeling or rebranding
+   - Commercial training, consulting, or workshops
+   - Internal business operations
+
+3. FORKING AND MODIFICATION
+
+   Users may fork and modify the project for personal use in accordance with
+   this license. Modified versions must retain this license and may not be
+   distributed for commercial purposes.
+
+4. CONTRIBUTIONS
+
+   Users may submit contributions through pull requests. By contributing to
+   this project, contributors grant the project maintainers a perpetual,
+   worldwide, royalty-free, irrevocable right to use, modify, distribute,
+   sublicense, and relicense their contributions as part of Debo.
+
+5. TRADEMARKS
+
+   The Debo name, logo, branding, and associated trademarks are not licensed
+   for reuse under this license. Use of the Debo branding requires separate
+   written permission from the copyright holder.
+
+6. COMMERCIAL LICENSING
+
+   Commercial use of the Software requires a separate written license agreement
+   with the copyright holder. Contact mail@30tools.com for commercial licensing
+   inquiries.
+
+7. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+8. TERMINATION
+
+   This license automatically terminates if you breach any of its terms.
+   Upon termination, you must cease all use of the Software and destroy all
+   copies in your possession.
+
+For questions about this license, contact: mail@30tools.com

@@ -1,0 +1,54 @@
+name: Good First Issue
+description: A beginner-friendly issue for new contributors (maintainer use)
+title: "[Good First Issue]: "
+labels: ["good first issue", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is designed for new contributors. If you are interested in working on it, leave a comment and a maintainer will assign it to you.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - Easy
+        - Medium
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files Likely Touched
+      description: Which files will need to be changed?
+      placeholder: |
+        - `src/components/Example.tsx`
+        - `src/index.css`
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this issue is resolved?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: resources
+    attributes:
+      label: Resources
+      description: Links to relevant documentation, examples, or context.
