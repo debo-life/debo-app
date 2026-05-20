@@ -69,7 +69,7 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
     <aside className="app-sidebar">
       <div className="sidebar-brand">
         <div className="sidebar-brand-dot" />
-        <h1>Debo</h1>
+        <span className="sidebar-brand-text">Debo</span>
       </div>
       <nav className="sidebar-nav">
         {navItems.map(({ page, label, icon }) => (
