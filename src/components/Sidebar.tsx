@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Page } from "../App";
 
 interface SidebarProps {
@@ -5,7 +6,7 @@ interface SidebarProps {
   onNavigate: (page: Page) => void;
 }
 
-const navItems: { page: Page; label: string; icon: JSX.Element }[] = [
+const navItems: { page: Page; label: string; icon: ReactNode }[] = [
   {
     page: "dashboard",
     label: "Dashboard",
