@@ -34,7 +34,7 @@ export default function Tasks({ memories, onToggle }: TasksProps) {
         <h2>Tasks</h2>
         <p>
           {openCount} open
-          {completedCount > 0 && ` · ${completedCount} completed`}
+          {completedCount > 0 && ` \u00b7 ${completedCount} completed`}
         </p>
       </div>
 
