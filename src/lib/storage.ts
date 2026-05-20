@@ -1,4 +1,4 @@
-import { MemoryItem, MemoryType } from "../types/memory";
+import type { MemoryItem, MemoryType } from "../types/memory";
 
 const STORAGE_KEY = "debo_memories";
 
@@ -83,14 +83,14 @@ export function importMemories(json: string): MemoryItem[] {
       item !== null &&
       typeof item.id === "string" &&
       typeof item.content === "string" &&
-      !existingIds.has(item.id)
+      typeof item.type === "string"
     ) {
-      valid.push(item as MemoryItem);
+      if (!existingIds.has(item.id)) {
+        valid.push(item as MemoryItem);
+      }
     }
   }
-  if (valid.length > 0) {
-    const merged = [...existing, ...valid];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-  }
+  const merged = [...valid, ...existing];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
   return valid;
 }

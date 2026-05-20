@@ -2,7 +2,6 @@ import type { MemoryItem } from "../types/memory";
 import MemoryCard from "../components/MemoryCard";
 import EmptyState from "../components/EmptyState";
 
-
 interface MemoryPageProps {
   memories: MemoryItem[];
   onDelete: (id: string) => void;
