@@ -25,7 +25,7 @@ export default function Search({ memories }: SearchProps) {
     <div>
       <div className="page-header">
         <h2>Search</h2>
-        <p>Find anything in your memory</p>
+        <p>Find anything you saved.</p>
       </div>
 
       <div className="search-container" style={{ marginBottom: 24 }}>
@@ -36,7 +36,7 @@ export default function Search({ memories }: SearchProps) {
         <input
           className="search-input"
           type="text"
-          placeholder="Search by title, content, or type..."
+          placeholder="Search journals, tasks, people, ideas..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoFocus
@@ -57,7 +57,7 @@ export default function Search({ memories }: SearchProps) {
       ) : results.length === 0 ? (
         <EmptyState
           title="No results found"
-          description={`Nothing matches "${query}". Try a different search term.`}
+          description={`I couldn't find "${query}" in your saved memory.`}
         />
       ) : (
         <div className="memory-list">
