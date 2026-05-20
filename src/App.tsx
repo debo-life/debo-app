@@ -1,51 +1,64 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { useState, useCallback } from "react";
+import { MemoryItem } from "./types/memory";
+import { getMemories, deleteMemory, updateMemory } from "./lib/storage";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./pages/Dashboard";
+import Capture from "./pages/Capture";
+import MemoryPage from "./pages/Memory";
+import Search from "./pages/Search";
+import Tasks from "./pages/Tasks";
+import Settings from "./pages/Settings";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+export type Page = "dashboard" | "capture" | "memory" | "search" | "tasks" | "settings";
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+export default function App() {
+  const [page, setPage] = useState<Page>("dashboard");
+  const [memories, setMemories] = useState<MemoryItem[]>(getMemories);
+
+  const refresh = useCallback(() => {
+    setMemories(getMemories());
+  }, []);
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      deleteMemory(id);
+      refresh();
+    },
+    [refresh]
+  );
+
+  const handleToggleTask = useCallback(
+    (id: string) => {
+      const mem = memories.find((m) => m.id === id);
+      if (mem) {
+        updateMemory({ ...mem, completed: !mem.completed, updatedAt: new Date().toISOString() });
+        refresh();
+      }
+    },
+    [memories, refresh]
+  );
+
+  const renderPage = () => {
+    switch (page) {
+      case "dashboard":
+        return <Dashboard memories={memories} onNavigate={setPage} />;
+      case "capture":
+        return <Capture onSaved={refresh} />;
+      case "memory":
+        return <MemoryPage memories={memories} onDelete={handleDelete} />;
+      case "search":
+        return <Search memories={memories} />;
+      case "tasks":
+        return <Tasks memories={memories} onToggle={handleToggleTask} />;
+      case "settings":
+        return <Settings onClear={refresh} />;
+    }
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <div className="app-layout">
+      <Sidebar active={page} onNavigate={setPage} />
+      <main className="app-main">{renderPage()}</main>
+    </div>
   );
 }
-
-export default App;
