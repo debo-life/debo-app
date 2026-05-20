@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
-import { MemoryItem } from "./types/memory";
+import type { MemoryItem } from "./types/memory";
 import { getMemories, deleteMemory, updateMemory } from "./lib/storage";
 import Sidebar from "./components/Sidebar";
+import type { Page } from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Capture from "./pages/Capture";
 import MemoryPage from "./pages/Memory";
@@ -9,7 +10,7 @@ import Search from "./pages/Search";
 import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
 
-export type Page = "dashboard" | "capture" | "memory" | "search" | "tasks" | "settings";
+export type { Page };
 
 export default function App() {
   const [page, setPage] = useState<Page>("dashboard");
@@ -31,7 +32,7 @@ export default function App() {
     (id: string) => {
       const mem = memories.find((m) => m.id === id);
       if (mem) {
-        updateMemory({ ...mem, completed: !mem.completed, updatedAt: new Date().toISOString() });
+        updateMemory(id, { completed: !mem.completed });
         refresh();
       }
     },
@@ -45,13 +46,19 @@ export default function App() {
       case "capture":
         return <Capture onSaved={refresh} />;
       case "memory":
-        return <MemoryPage memories={memories} onDelete={handleDelete} />;
+        return (
+          <MemoryPage
+            memories={memories}
+            onDelete={handleDelete}
+            onToggleComplete={handleToggleTask}
+          />
+        );
       case "search":
         return <Search memories={memories} />;
       case "tasks":
         return <Tasks memories={memories} onToggle={handleToggleTask} />;
       case "settings":
-        return <Settings onClear={refresh} />;
+        return <Settings memories={memories} onClear={refresh} />;
     }
   };
 

@@ -1,24 +1,38 @@
 import { MemoryItem } from "../types/memory";
-import { formatDate } from "../lib/utils";
+import { formatRelative } from "../lib/date";
+import { cn } from "../lib/cn";
+import Badge from "./Badge";
 
 interface MemoryCardProps {
   memory: MemoryItem;
   onDelete?: (id: string) => void;
+  onToggleComplete?: (id: string) => void;
+  compact?: boolean;
 }
 
-export default function MemoryCard({ memory, onDelete }: MemoryCardProps) {
+export default function MemoryCard({ memory, onDelete, onToggleComplete, compact }: MemoryCardProps) {
   return (
-    <div className="card memory-card">
+    <div className={cn("card", "memory-card", memory.completed && "completed")}>
       <div className="memory-card-main">
         <div className="memory-card-header">
-          <span className={`type-badge ${memory.type}`}>{memory.type}</span>
+          {memory.type === "task" && onToggleComplete && (
+            <input
+              type="checkbox"
+              className="task-checkbox"
+              checked={!!memory.completed}
+              onChange={() => onToggleComplete(memory.id)}
+            />
+          )}
+          <Badge type={memory.type} />
           {memory.title && (
             <span className="memory-card-title">{memory.title}</span>
           )}
         </div>
-        <div className="memory-card-content">{memory.content}</div>
+        {!compact && (
+          <div className="memory-card-content">{memory.content}</div>
+        )}
         <div className="memory-card-meta">
-          <span className="memory-card-date">{formatDate(memory.createdAt)}</span>
+          <span className="memory-card-date">{formatRelative(memory.createdAt)}</span>
         </div>
       </div>
       {onDelete && (

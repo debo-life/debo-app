@@ -1,12 +1,21 @@
 import { useState, useCallback, useEffect } from "react";
-import { MemoryItem, MemoryType } from "../types/memory";
-import { saveMemory, generateId } from "../lib/storage";
+import type { MemoryType } from "../types/memory";
+import { createMemory } from "../lib/storage";
+import Input from "../components/Input";
+import Textarea from "../components/Textarea";
+import Button from "../components/Button";
 import Toast from "../components/Toast";
 
-const TYPES: MemoryType[] = ["thought", "task", "idea", "link", "journal"];
+const TYPES: { value: MemoryType; label: string }[] = [
+  { value: "thought", label: "Thought" },
+  { value: "task", label: "Task" },
+  { value: "idea", label: "Idea" },
+  { value: "link", label: "Link" },
+  { value: "journal", label: "Journal" },
+];
 
 interface CaptureProps {
-  onSaved: (memory: MemoryItem) => void;
+  onSaved: () => void;
 }
 
 export default function Capture({ onSaved }: CaptureProps) {
@@ -17,23 +26,12 @@ export default function Capture({ onSaved }: CaptureProps) {
 
   const handleSave = useCallback(() => {
     if (!content.trim()) return;
-
-    const now = new Date().toISOString();
-    const memory: MemoryItem = {
-      id: generateId(),
-      title: title.trim(),
-      content: content.trim(),
-      type,
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    saveMemory(memory);
-    onSaved(memory);
+    createMemory({ title: title.trim(), content: content.trim(), type });
     setTitle("");
     setContent("");
     setType("thought");
     setToast("Memory saved");
+    onSaved();
   }, [title, content, type, onSaved]);
 
   useEffect(() => {
@@ -55,38 +53,33 @@ export default function Capture({ onSaved }: CaptureProps) {
       </div>
 
       <div className="capture-form">
-        <div className="form-group">
-          <label className="form-label">Title (optional)</label>
-          <input
-            className="form-input"
-            type="text"
-            placeholder="Give it a name..."
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Title (optional)"
+          placeholder="Give it a name..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
 
-        <div className="form-group">
-          <label className="form-label">Content</label>
-          <textarea
-            className="form-input"
-            placeholder="What do you want Debo to remember?"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            autoFocus
-          />
-        </div>
+        <Textarea
+          label="Content"
+          placeholder="What do you want Debo to remember?"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          autoFocus
+          rows={7}
+        />
 
         <div className="form-group">
           <label className="form-label">Type</label>
           <div className="type-selector">
             {TYPES.map((t) => (
               <button
-                key={t}
-                className={`type-option${type === t ? " selected" : ""}`}
-                onClick={() => setType(t)}
+                key={t.value}
+                type="button"
+                className={`type-option${type === t.value ? " selected" : ""}`}
+                onClick={() => setType(t.value)}
               >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
+                {t.label}
               </button>
             ))}
           </div>
@@ -99,13 +92,13 @@ export default function Capture({ onSaved }: CaptureProps) {
             <kbd>Enter</kbd>
             <span>to save</span>
           </span>
-          <button
-            className="btn btn-primary"
+          <Button
+            variant="primary"
             onClick={handleSave}
             disabled={!content.trim()}
           >
             Save memory
-          </button>
+          </Button>
         </div>
       </div>
 

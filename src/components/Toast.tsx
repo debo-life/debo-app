@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { cn } from "../lib/cn";
 
 interface ToastProps {
   message: string;
@@ -12,5 +13,5 @@ export default function Toast({ message, type = "success", onClose }: ToastProps
     return () => clearTimeout(timer);
   }, [onClose]);
 
-  return <div className={`toast ${type}`}>{message}</div>;
+  return <div className={cn("toast", type === "success" && "success")}>{message}</div>;
 }
