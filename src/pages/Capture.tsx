@@ -21,9 +21,9 @@ export default function Capture({ onSaved }: CaptureProps) {
   const [type, setType] = useState<MemoryType>("thought");
   const [toast, setToast] = useState<string | null>(null);
 
-  const handleSave = useCallback(() => {
+  const handleSave = useCallback(async () => {
     if (!content.trim()) return;
-    createMemory({ title: title.trim(), content: content.trim(), type });
+    await createMemory({ title: title.trim(), content: content.trim(), type });
     setTitle("");
     setContent("");
     setType("thought");

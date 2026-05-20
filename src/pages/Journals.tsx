@@ -24,14 +24,14 @@ export default function Journals({ journals, onOpen, onRefresh }: JournalsProps)
     );
   }, [journals, search]);
 
-  const handleDelete = (id: string) => {
-    deleteJournal(id);
+  const handleDelete = async (id: string) => {
+    await deleteJournal(id);
     setOpenMenu(null);
     onRefresh();
   };
 
-  const handleDuplicate = (id: string) => {
-    duplicateJournal(id);
+  const handleDuplicate = async (id: string) => {
+    await duplicateJournal(id);
     setOpenMenu(null);
     onRefresh();
   };

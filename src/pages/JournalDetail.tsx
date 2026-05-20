@@ -32,8 +32,8 @@ export default function JournalDetail({
       setSaveStatus("unsaved");
 
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => {
-        const updated = updateJournal(journal.id, { title: value });
+      saveTimerRef.current = setTimeout(async () => {
+        const updated = await updateJournal(journal.id, { title: value });
         if (updated) {
           onUpdate(updated);
           setSaveStatus("saved");
@@ -48,9 +48,9 @@ export default function JournalDetail({
       setSaveStatus("unsaved");
 
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = setTimeout(async () => {
         const excerpt = plainText.slice(0, 150).trim() || "";
-        const updated = updateJournal(journal.id, {
+        const updated = await updateJournal(journal.id, {
           content,
           plainText,
           excerpt,
@@ -83,8 +83,8 @@ export default function JournalDetail({
     };
   }, []);
 
-  const handleDelete = () => {
-    deleteJournal(journal.id);
+  const handleDelete = async () => {
+    await deleteJournal(journal.id);
     onDelete();
   };
 
