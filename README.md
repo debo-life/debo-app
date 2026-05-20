@@ -43,25 +43,26 @@ Privacy is non-negotiable. Your thoughts, tasks, and ideas are deeply personal. 
 
 ## Current Features (v0.1.0)
 
-- Capture thoughts, tasks, ideas, links, and journal entries
-- Memory timeline with chronological browsing
-- Full-text search across all memories
-- Task management with completion tracking
-- Export/import memories as JSON
-- Dark and light theme (follows system preference)
-- Keyboard shortcuts (Cmd/Ctrl + Enter to save)
-- Local-only storage via localStorage
+- **Journal system** with rich text editor (PlateJS) — headings, bold, italic, underline, blockquote, lists, links
+- **Auto-save** with debounced persistence and Cmd+S manual save
+- **Memory capture** for thoughts, tasks, ideas, links
+- **Memory timeline** with type filters and chronological browsing
+- **Task management** with completion tracking (open/completed filters)
+- **Full-text search** across journals and memories
+- **Export/import** all data as JSON
+- **Dark and light theme** (follows system preference)
+- **Keyboard shortcuts** — Cmd+K command menu, Cmd+N new journal, Cmd+S save
+- **Local-only storage** via localStorage
 
 ## Planned Features
 
-- AI-powered memory recall and connections
+- AI-powered memory recall and connections (v0.3.0)
+- SQLite with vector embeddings for semantic search (v0.2.0)
 - Voice input for quick capture
-- Tags and categories
-- Rich text editor
-- SQLite local database
 - File attachments
 - Global hotkey for instant capture
 - Tray app for background access
+- Optional encrypted cloud sync (v0.5.0)
 
 ## Tech Stack
 
@@ -72,6 +73,7 @@ Privacy is non-negotiable. Your thoughts, tasks, and ideas are deeply personal. 
 | Build tool | [Vite 7](https://vite.dev) |
 | Package manager | [Bun](https://bun.sh) |
 | Backend | [Rust](https://rust-lang.org) |
+| Rich text editor | [PlateJS v49](https://platejs.org) (Slate-based) |
 | Storage | localStorage (SQLite planned) |
 
 ## Getting Started
@@ -116,18 +118,31 @@ bun run format       # Format code with Prettier
 
 ```
 src/
-  types/          — TypeScript type definitions
-  lib/            — Storage, utilities, helpers
-  components/     — Reusable UI components
-  pages/          — Application screens
-  App.tsx         — Root component
+  types/          — TypeScript type definitions (MemoryItem, JournalEntry)
+  lib/            — Storage layer, utilities, date formatting
+  components/
+    editor/       — PlateJS rich text editor
+    Sidebar.tsx   — Navigation sidebar
+    MemoryCard.tsx, Badge.tsx, Button.tsx, etc.
+  pages/
+    Dashboard.tsx — Today view with stats
+    Journals.tsx  — Journal listing with search
+    JournalDetail.tsx — Rich text journal editor
+    Capture.tsx   — Quick memory capture
+    Memory.tsx    — Memory timeline
+    Tasks.tsx     — Task management
+    Search.tsx    — Full-text search
+    Settings.tsx  — Data management
+  App.tsx         — Root component with routing
   main.tsx        — Entry point
-  index.css       — Design system
+  index.css       — Design system (plain CSS)
 src-tauri/
   src/            — Rust backend
   icons/          — App icons
   capabilities/   — Tauri permissions
-docs/             — Architecture, design principles
+docs/
+  specs/          — Product, UX, editor, data model specs
+  adr/            — Architecture decision records
 ```
 
 See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for full details.
@@ -141,23 +156,31 @@ See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for full details.
 │  ┌──────────┐  ┌──────────────────────┐ │
 │  │ Sidebar  │  │    Main Content      │ │
 │  │          │  │                      │ │
-│  │ Dashboard│  │  ┌────────────────┐  │ │
-│  │ Capture  │  │  │  Active Page   │  │ │
-│  │ Memory   │  │  │                │  │ │
-│  │ Search   │  │  │  Dashboard     │  │ │
-│  │ Tasks    │  │  │  Capture       │  │ │
-│  │ Settings │  │  │  Memory        │  │ │
-│  │          │  │  │  Search        │  │ │
-│  └──────────┘  │  │  Tasks         │  │ │
+│  │ Today    │  │  ┌────────────────┐  │ │
+│  │ Journals │  │  │  Active Page   │  │ │
+│  │ Capture  │  │  │                │  │ │
+│  │ Memories │  │  │  Today         │  │ │
+│  │ Tasks    │  │  │  Journals      │  │ │
+│  │ Search   │  │  │  Journal Editor│  │ │
+│  │ Settings │  │  │  Memories      │  │ │
+│  │          │  │  │  Tasks         │  │ │
+│  └──────────┘  │  │  Search        │  │ │
 │                │  │  Settings      │  │ │
 │                │  └────────────────┘  │ │
 │                └──────────────────────┘ │
 ├─────────────────────────────────────────┤
 │  Storage Layer (localStorage)           │
 │  ┌──────────────────────────────────┐   │
-│  │ getMemories | createMemory       │   │
-│  │ updateMemory | deleteMemory      │   │
-│  │ exportMemories | importMemories  │   │
+│  │ Journals: CRUD, search, duplicate│   │
+│  │ Memories: CRUD, search, filter   │   │
+│  │ Export/Import all data as JSON   │   │
+│  └──────────────────────────────────┘   │
+├─────────────────────────────────────────┤
+│  Rich Text Editor (PlateJS/Slate)       │
+│  ┌──────────────────────────────────┐   │
+│  │ Headings, bold, italic, underline│   │
+│  │ Blockquote, lists, links         │   │
+│  │ Auto-save with debounce          │   │
 │  └──────────────────────────────────┘   │
 ├─────────────────────────────────────────┤
 │  Tauri v2 (Rust)                        │
@@ -172,15 +195,15 @@ See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for full details.
 ### Data Flow
 
 ```
-User Input → Capture Page → createMemory() → localStorage
-                                                  ↓
-Dashboard ← getMemories() ←──────────────────────┘
-Memory   ← getMemories() ←──────────────────────┘
-Search   ← getMemories() → filter → results
+User Input → Journal Editor → PlateJS Value → updateJournal() → localStorage
+                                                                       ↓
+Today    ← getJournals() + getMemories() ←────────────────────────────┘
+Journals ← getJournals() ←────────────────────────────────────────────┘
+Search   ← searchJournals() + searchMemories() → results
 Tasks    ← getMemories() → filter(type=task) → task list
-Settings → exportMemories() → JSON file
-         → importMemories() ← JSON file
-         → clearMemories() → clear localStorage
+Settings → exportAllData() → JSON file
+         → importAllData() ← JSON file
+         → clearAllData() → clear localStorage
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed architecture documentation.
