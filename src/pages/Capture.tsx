@@ -1,9 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import type { MemoryType } from "../types/memory";
 import { createMemory } from "../lib/storage";
-import Input from "../components/Input";
-import Textarea from "../components/Textarea";
-import Button from "../components/Button";
 import Toast from "../components/Toast";
 
 const TYPES: { value: MemoryType; label: string }[] = [
@@ -30,7 +27,7 @@ export default function Capture({ onSaved }: CaptureProps) {
     setTitle("");
     setContent("");
     setType("thought");
-    setToast("Memory saved");
+    setToast("Captured. Debo will remember this.");
     onSaved();
   }, [title, content, type, onSaved]);
 
@@ -53,21 +50,28 @@ export default function Capture({ onSaved }: CaptureProps) {
       </div>
 
       <div className="capture-form">
-        <Input
-          label="Title (optional)"
-          placeholder="Give it a name..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        <div className="form-group">
+          <label className="form-label">Title</label>
+          <input
+            className="form-input"
+            type="text"
+            placeholder="Give it a name..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
 
-        <Textarea
-          label="Content"
-          placeholder="What do you want Debo to remember?"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          autoFocus
-          rows={7}
-        />
+        <div className="form-group">
+          <label className="form-label">Content</label>
+          <textarea
+            className="form-input"
+            placeholder="Start with one line."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            autoFocus
+            rows={7}
+          />
+        </div>
 
         <div className="form-group">
           <label className="form-label">Type</label>
@@ -92,14 +96,18 @@ export default function Capture({ onSaved }: CaptureProps) {
             <kbd>Enter</kbd>
             <span>to save</span>
           </span>
-          <Button
-            variant="primary"
+          <button
+            className="btn btn-primary"
             onClick={handleSave}
             disabled={!content.trim()}
           >
             Save memory
-          </Button>
+          </button>
         </div>
+
+        <p className="capture-hint">
+          Your memory is private on this device.
+        </p>
       </div>
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
