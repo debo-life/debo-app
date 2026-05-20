@@ -1,10 +1,7 @@
 import type { MemoryItem } from "../types/memory";
 import type { Page } from "../components/Sidebar";
 import { isToday } from "../lib/date";
-import StatCard from "../components/StatCard";
 import MemoryCard from "../components/MemoryCard";
-import Button from "../components/Button";
-import EmptyState from "../components/EmptyState";
 
 interface DashboardProps {
   memories: MemoryItem[];
@@ -18,70 +15,93 @@ export default function Dashboard({ memories, onNavigate }: DashboardProps) {
   const completedTasks = memories.filter((m) => m.type === "task" && m.completed).length;
   const recent = memories.slice(0, 5);
 
+  // Empty state
   if (total === 0) {
     return (
-      <div>
-        <div className="page-header">
-          <h2>Good to see you again.</h2>
+      <div className="dashboard">
+        <div className="dashboard-hero">
+          <h1>Good to see you again.</h1>
           <p>Capture what matters. Find it when you need it.</p>
         </div>
-        <EmptyState
-          icon={
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        <div className="dashboard-empty">
+          <svg className="dashboard-empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+          <h3>Start with one line.</h3>
+          <p>Your future self will thank you. Capture a thought, task, or idea to begin building your memory.</p>
+          <button className="btn btn-primary" onClick={() => onNavigate("capture")}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-          }
-          title="No memories yet"
-          description="Capture your first thought to get started."
-          action={
-            <Button variant="primary" onClick={() => onNavigate("capture")}>
-              Capture a memory
-            </Button>
-          }
-        />
+            Capture a memory
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="page-header">
-        <h2>Good to see you again.</h2>
+    <div className="dashboard">
+      {/* Hero greeting */}
+      <div className="dashboard-hero">
+        <h1>Good to see you again.</h1>
         <p>Capture what matters. Find it when you need it.</p>
       </div>
 
+      {/* Primary CTA card */}
+      <div className="dashboard-cta">
+        <div className="dashboard-cta-card">
+          <div>
+            <h3>Start with one thought.</h3>
+            <p>What should Debo remember today?</p>
+          </div>
+          <button className="btn btn-primary" onClick={() => onNavigate("capture")}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Capture a memory
+          </button>
+        </div>
+      </div>
+
+      {/* Stats row */}
       <div className="stats-grid">
-        <StatCard label="Total memories" value={total} />
-        <StatCard label="Today's captures" value={todayCount} />
-        <StatCard label="Open tasks" value={openTasks} />
-        <StatCard label="Completed tasks" value={completedTasks} />
+        <div className="stat-card">
+          <div className="stat-card-label">Memories saved</div>
+          <div className="stat-card-value">{total}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">Today's captures</div>
+          <div className="stat-card-value accent">{todayCount}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">Open tasks</div>
+          <div className="stat-card-value">{openTasks}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-card-label">Completed</div>
+          <div className="stat-card-value">{completedTasks}</div>
+        </div>
       </div>
 
-      <div className="cta-section">
-        <Button variant="primary" onClick={() => onNavigate("capture")}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Capture a memory
-        </Button>
-      </div>
-
+      {/* Recent memories */}
       {recent.length > 0 && (
-        <>
+        <div className="dashboard-section">
           <div className="section-header">
             <h3>Recent memories</h3>
-            <Button variant="ghost" onClick={() => onNavigate("memory")}>
+            <button className="btn btn-ghost" onClick={() => onNavigate("memory")}>
               View all
-            </Button>
+            </button>
           </div>
           <div className="memory-list">
             {recent.map((m) => (
               <MemoryCard key={m.id} memory={m} compact />
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

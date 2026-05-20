@@ -33,8 +33,9 @@ export default function Tasks({ memories, onToggle }: TasksProps) {
       <div className="page-header">
         <h2>Tasks</h2>
         <p>
-          {openCount} open
-          {completedCount > 0 && ` \u00b7 ${completedCount} completed`}
+          {tasks.length === 0
+            ? "Promises, follow-ups, and things you meant to do."
+            : `${openCount} open${completedCount > 0 ? ` \u00b7 ${completedCount} completed` : ""}`}
         </p>
       </div>
 
