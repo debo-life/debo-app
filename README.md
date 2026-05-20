@@ -19,9 +19,6 @@ A private desktop app to capture, organize, and search your thoughts, tasks, ide
 
 </div>
 
-<!-- TODO: Add screenshot -->
-<!-- TODO: Add demo GIF -->
-
 ---
 
 ## Why Debo Exists
@@ -30,7 +27,7 @@ Most note-taking apps are built for document storage, not memory. You write some
 
 Debo is built on a different premise: your personal knowledge should be captured instantly, stored privately, and retrieved effortlessly. It bridges the gap between disposable note apps and heavyweight knowledge management systems. No complex organization schemes, no folder hierarchies to maintain — just capture and find.
 
-Privacy is non-negotiable. Your thoughts, tasks, and ideas are deeply personal. Debo stores everything locally on your device. No accounts, no cloud sync, no telemetry. Your data belongs to you, period. As AI memory tools emerge, Debo will remain a place where you control what's remembered and how it's used.
+Privacy is non-negotiable. Your thoughts, tasks, and ideas are deeply personal. Debo stores everything locally on your device. No accounts, no cloud sync, no telemetry. Your data belongs to you, period.
 
 ## Core Principles
 
@@ -43,7 +40,7 @@ Privacy is non-negotiable. Your thoughts, tasks, and ideas are deeply personal. 
 
 ## Current Features (v0.1.0)
 
-- **Journal system** with rich text editor (PlateJS) — headings, bold, italic, underline, blockquote, lists, links
+- **Journal system** with PlateJS rich text editor — headings, bold, italic, underline, blockquote, lists, links
 - **Auto-save** with debounced persistence and Cmd+S manual save
 - **Memory capture** for thoughts, tasks, ideas, links
 - **Memory timeline** with type filters and chronological browsing
@@ -51,17 +48,17 @@ Privacy is non-negotiable. Your thoughts, tasks, and ideas are deeply personal. 
 - **Full-text search** across journals and memories
 - **Export/import** all data as JSON
 - **Dark and light theme** (follows system preference)
-- **Keyboard shortcuts** — Cmd+K command menu, Cmd+N new journal, Cmd+S save
+- **Keyboard shortcuts** — Cmd+S save
 - **Local-only storage** via localStorage
 
 ## Planned Features
 
+See [docs/specs/ROADMAP.md](docs/specs/ROADMAP.md) for the full roadmap.
+
 - AI-powered memory recall and connections (v0.3.0)
 - SQLite with vector embeddings for semantic search (v0.2.0)
 - Voice input for quick capture
-- File attachments
 - Global hotkey for instant capture
-- Tray app for background access
 - Optional encrypted cloud sync (v0.5.0)
 
 ## Tech Stack
@@ -145,68 +142,17 @@ docs/
   adr/            — Architecture decision records
 ```
 
-See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for full details.
+## Documentation
 
-## Architecture
-
-```
-┌─────────────────────────────────────────┐
-│              Debo Desktop               │
-├─────────────────────────────────────────┤
-│  ┌──────────┐  ┌──────────────────────┐ │
-│  │ Sidebar  │  │    Main Content      │ │
-│  │          │  │                      │ │
-│  │ Today    │  │  ┌────────────────┐  │ │
-│  │ Journals │  │  │  Active Page   │  │ │
-│  │ Capture  │  │  │                │  │ │
-│  │ Memories │  │  │  Today         │  │ │
-│  │ Tasks    │  │  │  Journals      │  │ │
-│  │ Search   │  │  │  Journal Editor│  │ │
-│  │ Settings │  │  │  Memories      │  │ │
-│  │          │  │  │  Tasks         │  │ │
-│  └──────────┘  │  │  Search        │  │ │
-│                │  │  Settings      │  │ │
-│                │  └────────────────┘  │ │
-│                └──────────────────────┘ │
-├─────────────────────────────────────────┤
-│  Storage Layer (localStorage)           │
-│  ┌──────────────────────────────────┐   │
-│  │ Journals: CRUD, search, duplicate│   │
-│  │ Memories: CRUD, search, filter   │   │
-│  │ Export/Import all data as JSON   │   │
-│  └──────────────────────────────────┘   │
-├─────────────────────────────────────────┤
-│  Rich Text Editor (PlateJS/Slate)       │
-│  ┌──────────────────────────────────┐   │
-│  │ Headings, bold, italic, underline│   │
-│  │ Blockquote, lists, links         │   │
-│  │ Auto-save with debounce          │   │
-│  └──────────────────────────────────┘   │
-├─────────────────────────────────────────┤
-│  Tauri v2 (Rust)                        │
-│  ┌──────────────────────────────────┐   │
-│  │ Window management                │   │
-│  │ System integration               │   │
-│  │ File system access (future)      │   │
-│  └──────────────────────────────────┘   │
-└─────────────────────────────────────────┘
-```
-
-### Data Flow
-
-```
-User Input → Journal Editor → PlateJS Value → updateJournal() → localStorage
-                                                                       ↓
-Today    ← getJournals() + getMemories() ←────────────────────────────┘
-Journals ← getJournals() ←────────────────────────────────────────────┘
-Search   ← searchJournals() + searchMemories() → results
-Tasks    ← getMemories() → filter(type=task) → task list
-Settings → exportAllData() → JSON file
-         → importAllData() ← JSON file
-         → clearAllData() → clear localStorage
-```
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed architecture documentation.
+| Document | Description |
+|----------|-------------|
+| [Product Spec](docs/specs/PRODUCT_SPEC.md) | What Debo is and who it's for |
+| [UX Spec](docs/specs/UX_SPEC.md) | Navigation, pages, writing flow |
+| [UI System](docs/specs/UI_SYSTEM.md) | Design tokens, typography, spacing |
+| [Editor Spec](docs/specs/EDITOR_SPEC.md) | PlateJS editor design and features |
+| [Data Model](docs/specs/DATA_MODEL.md) | JournalEntry, MemoryItem, storage |
+| [Roadmap](docs/specs/ROADMAP.md) | Phase 0 through Phase 5 |
+| [ADR: PlateJS](docs/adr/0001-use-platejs-for-rich-text-editor.md) | Why PlateJS over alternatives |
 
 ## Contributing
 
@@ -223,20 +169,6 @@ Debo is **source-available** and **personal-use free** under the [Debo Personal 
 - Contact: mail@30tools.com
 
 This is a source-available license, not an OSI-approved open source license.
-
-## Roadmap
-
-See [ROADMAP.md](ROADMAP.md) for the full product roadmap covering phases 0 through 5.
-
-## Community
-
-- [GitHub Issues](https://github.com/debo-life/debo-app/issues) — Bug reports and feature requests
-- [GitHub Discussions](https://github.com/debo-life/debo-app/discussions) — Questions and ideas
-- [Good First Issues](docs/GOOD_FIRST_ISSUES.md) — Start contributing
-
-## Security
-
-To report a vulnerability, see [SECURITY.md](SECURITY.md). Please do not open public issues for security concerns.
 
 ## Maintainer
 
